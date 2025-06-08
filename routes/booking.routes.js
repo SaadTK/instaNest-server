@@ -6,7 +6,8 @@ import {
   cancelBooking,
 } from "../controllers/bookingController.js";
 
-import { verifyToken } from "../middleware/authMiddleware.js";
+// import { verifyToken } from "../middleware/authMiddleware.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

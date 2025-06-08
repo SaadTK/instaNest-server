@@ -1,21 +1,31 @@
-// routes/roomRoutes.js
-import express from 'express';
+import express from "express";
 import {
   createRoom,
-  getAllRooms,
+  getRooms,
   getRoomById,
   updateRoom,
   deleteRoom,
-} from '../controllers/roomController.js';
-
-import { verifyToken } from '../middleware/authMiddleware.js';
+  getFilteredRooms,
+} from "../controllers/roomController.js";
 
 const router = express.Router();
 
-router.get('/', getAllRooms);
-router.get('/:id', getRoomById);
-router.post('/', verifyToken, createRoom);
-router.put('/:id', verifyToken, updateRoom);
-router.delete('/:id', verifyToken, deleteRoom);
+// Create new room
+router.post("/", createRoom);
+
+// Get all rooms
+router.get("/", getRooms);
+
+// Get single room by ID
+router.get("/:id", getRoomById);
+
+// Update room by ID
+router.put("/:id", updateRoom);
+
+// Delete room by ID
+router.delete("/:id", deleteRoom);
+
+router.get("/rooms", getFilteredRooms);
+
 
 export default router;

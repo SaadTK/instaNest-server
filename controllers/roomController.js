@@ -1,57 +1,83 @@
-// controllers/roomController.js
 import Room from "../models/Room.js";
 
-// Create a new room
+// Create new room
 export const createRoom = async (req, res) => {
   try {
-    const newRoom = new Room(req.body);
-    const savedRoom = await newRoom.save();
+    const room = new Room(req.body);
+    const savedRoom = await room.save();
     res.status(201).json(savedRoom);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 // Get all rooms
-export const getAllRooms = async (req, res) => {
+export const getRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
     res.json(rooms);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Get a single room by ID
+// Get single room by ID
 export const getRoomById = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("reviews");
-    if (!room) return res.status(404).json({ error: "Room not found" });
+    const room = await Room.findById(req.params.id);
+    if (!room) return res.status(404).json({ message: "Room not found" });
     res.json(room);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Update a room
+// Update room by ID
 export const updateRoom = async (req, res) => {
   try {
     const updatedRoom = await Room.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!updatedRoom) return res.status(404).json({ error: "Room not found" });
+    if (!updatedRoom)
+      return res.status(404).json({ message: "Room not found" });
     res.json(updatedRoom);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
-// Delete a room
+// Delete room by ID
 export const deleteRoom = async (req, res) => {
   try {
-    const deleted = await Room.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Room not found" });
+    const deletedRoom = await Room.findByIdAndDelete(req.params.id);
+    if (!deletedRoom)
+      return res.status(404).json({ message: "Room not found" });
     res.json({ message: "Room deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+//Filter/Search Rooms by Price, Capacity, Rating
+export const getFilteredRooms = async (req, res) => {
+  try {
+    const { minPrice, maxPrice, capacity, rating } = req.query;
+    const filter = {};
+
+    if (minPrice && maxPrice) {
+      filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+    }
+
+    if (capacity) {
+      filter.capacity = parseInt(capacity);
+    }
+
+    // If you have rating in room model
+    if (rating) {
+      filter.rating = { $gte: parseFloat(rating) };
+    }
+
+    const rooms = await Room.find(filter);
+    res.json(rooms);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

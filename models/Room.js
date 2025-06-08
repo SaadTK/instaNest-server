@@ -1,14 +1,27 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const roomSchema = new mongoose.Schema({
-  name: String,
-  description: String,
-  price: { type: Number, required: true },
-  image: String,
-  amenities: [String],
-  rating: { type: Number, default: 0 },
-  location: String,
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-}, { timestamps: true });
+const roomSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: String,
+    price: { type: Number, required: true },
+    rating: Number,
+    location: String,
+    images: [String],
+    amenities: [String],
+    capacity: Number,
+    available: { type: Boolean, default: true },
+    reviews: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        comment: String,
+        rating: Number,
+        date: { type: Date, default: Date.now },
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model('Room', roomSchema);
+const Room = mongoose.model("Room", roomSchema);
+export default Room;

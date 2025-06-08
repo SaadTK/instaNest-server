@@ -36,12 +36,21 @@ export const loginUser = async (req, res) => {
     );
 
     res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
       .status(200)
       .json({
-        token,
         user: { name: user.name, email: user.email, role: user.role },
       });
   } catch (err) {
     res.status(500).json({ message: "Login failed", error: err.message });
   }
+};
+
+export const logoutUser = (req, res) => {
+  res.clearCookie("token").json({ message: "Logged out" });
 };
