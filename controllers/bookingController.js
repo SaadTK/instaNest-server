@@ -46,7 +46,7 @@ export const getUserBookings = async (req, res) => {
   }
 };
 
-// Cancel a booking
+// Cancel/delete a booking
 export const cancelBooking = async (req, res) => {
   try {
     const deleted = await Booking.findOneAndDelete({
@@ -61,6 +61,15 @@ export const cancelBooking = async (req, res) => {
     }
 
     res.json({ message: "Booking cancelled" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+// Get all bookings (for admin or general purposes)
+export const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find().populate("room user");
+    res.json(bookings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
