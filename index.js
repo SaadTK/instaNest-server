@@ -16,7 +16,8 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+      "https://insta-nest-client-hk6b6md16-tahmid-karim-saads-projects.vercel.app/",
     credentials: true,
   })
 );
