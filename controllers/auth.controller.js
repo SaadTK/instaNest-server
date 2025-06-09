@@ -12,7 +12,10 @@ export const registerUser = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashed });
 
-    res.status(201).json({ message: "Registered successfully", user });
+    res.status(201).json({
+      message: "Registered successfully",
+      user: { name: user.name, email: user.email, role: user.role },
+    });
   } catch (err) {
     res
       .status(500)
@@ -40,7 +43,7 @@ export const loginUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(200)
       .json({
@@ -53,4 +56,19 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = (req, res) => {
   res.clearCookie("token").json({ message: "Logged out" });
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: "Not authenticated" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
 };

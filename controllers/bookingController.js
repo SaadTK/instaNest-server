@@ -2,9 +2,26 @@
 import Booking from "../models/Bookings.js";
 
 // Create a booking
+
 // export const createBooking = async (req, res) => {
 //   try {
-//     const booking = new Booking({ ...req.body, user: req.user.id });
+//     const { room } = req.body;
+//     const userId = req.user.id;
+
+//     // Check if this room is already booked by ANY user
+//     const roomAlreadyBooked = await Booking.findOne({ room });
+//     if (roomAlreadyBooked) {
+//       return res.status(400).json({ error: "This room is already booked." });
+//     }
+
+//     // Optional: If you want to explicitly check if the user already booked this room (redundant if above is true)
+//     // const userAlreadyBookedRoom = await Booking.findOne({ room, user: userId });
+//     // if (userAlreadyBookedRoom) {
+//     //   return res.status(400).json({ error: "You have already booked this room." });
+//     // }
+
+//     // Create booking if no conflicts
+//     const booking = new Booking({ ...req.body, user: userId });
 //     const saved = await booking.save();
 //     res.status(201).json(saved);
 //   } catch (err) {
@@ -13,22 +30,22 @@ import Booking from "../models/Bookings.js";
 // };
 export const createBooking = async (req, res) => {
   try {
-    const { room } = req.body;
+    console.log("Booking request body:", req.body); // Add this line to debug
+
+    const { room, checkIn, checkOut, guests, totalPrice } = req.body;
     const userId = req.user.id;
 
-    // Check if this room is already booked by ANY user
+    // Check all required fields exist
+    if (!room || !checkIn || !checkOut || !guests || !totalPrice) {
+      return res.status(400).json({ error: "Missing booking information" });
+    }
+
+    // Check if this room is already booked by any user
     const roomAlreadyBooked = await Booking.findOne({ room });
     if (roomAlreadyBooked) {
       return res.status(400).json({ error: "This room is already booked." });
     }
 
-    // Optional: If you want to explicitly check if the user already booked this room (redundant if above is true)
-    // const userAlreadyBookedRoom = await Booking.findOne({ room, user: userId });
-    // if (userAlreadyBookedRoom) {
-    //   return res.status(400).json({ error: "You have already booked this room." });
-    // }
-
-    // Create booking if no conflicts
     const booking = new Booking({ ...req.body, user: userId });
     const saved = await booking.save();
     res.status(201).json(saved);
@@ -36,6 +53,7 @@ export const createBooking = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
 // Get bookings for logged-in user
 export const getUserBookings = async (req, res) => {
   try {
