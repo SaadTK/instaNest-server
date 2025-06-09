@@ -1,4 +1,4 @@
-```
+
 # InstaNest - Modern Hotel Booking Platform
 
 ## Project Overview
