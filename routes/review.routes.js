@@ -7,7 +7,7 @@ import {
 import { verifyToken } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
-router.post("/rooms/:roomId/reviews", verifyToken, postReview);
-router.get("/rooms/:roomId/reviews", getReviewsByRoom);
+router.post("/:roomId", verifyToken, postReview);
+router.get("/:roomId", getReviewsByRoom);
 
 export default router;

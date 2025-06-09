@@ -5,7 +5,7 @@ export const postReview = async (req, res) => {
   try {
     const { roomId } = req.params;
     const { rating, comment } = req.body;
-    const userId = req.userId; // assuming you have auth middleware that sets req.userId
+    const userId = req.user.id; // assuming you have auth middleware that sets req.userId
 
     if (!rating || !comment) {
       return res
