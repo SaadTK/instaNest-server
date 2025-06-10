@@ -41,7 +41,7 @@ export const loginUser = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
@@ -58,13 +58,23 @@ export const logoutUser = (req, res) => {
   res.clearCookie("token").json({ message: "Logged out" });
 };
 
+// export const getProfile = async (req, res) => {
+//   try {
+//     const token = req.cookies.token;
+//     if (!token) return res.status(401).json({ message: "Not authenticated" });
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const user = await User.findById(decoded.id).select("-password");
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     res.json({ user });
+//   } catch (err) {
+//     res.status(401).json({ message: "Invalid token" });
+//   }
+// };
 export const getProfile = async (req, res) => {
   try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: "Not authenticated" });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ user });
