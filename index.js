@@ -16,8 +16,7 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin:
-      "https://insta-nest-client-hk6b6md16-tahmid-karim-saads-projects.vercel.app",
+    origin: "https://insta-nest-client-sxx4.vercel.app",
     credentials: true,
   })
 );
